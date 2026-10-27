@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-2">My Applications</h1>
+    <p class="text-muted mb-4">
+        Track the progress of your job applications.
+    </p>
+
+    {% if applications %}
+        <div class="row g-4">
+            {% for application in applications %}
+                <div class="col-12 col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h5 fw-bold">
+                                {{ application.job.title }}
+                            </h2>
+
+                            <p class="text-primary fw-semibold mb-2">
+                                {{ application.job.company }}
+                            </p>
+
+                            <p class="text-muted mb-3">
+                                {{ application.job.location }}
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                <span class="badge text-bg-info">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </p>
+
+                            <p class="small text-muted">
+                                Applied on
+                                {{ application.applied_at|date:"d M Y, H:i" }}
+                            </p>
+
+                            <a href="{% url 'job_detail' application.job.id %}"
+                               class="btn btn-outline-primary btn-sm">
+                                View Job
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <h2 class="h4">No applications yet</h2>
+            <p class="text-muted">
+                Explore available jobs and submit your first application.
+            </p>
+            <a href="{% url 'home' %}" class="btn btn-primary">
+                Browse Jobs
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

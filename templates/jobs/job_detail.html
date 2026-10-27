@@ -1,0 +1,17 @@
+
+{% if user.is_authenticated %}
+    <a href="{% url 'apply_for_job' job.id %}"
+       class="btn btn-primary mt-2">
+        Apply for This Job
+    </a>
+{% else %}
+    <a href="{% url 'login' %}?next={% url 'apply_for_job' job.id %}"
+       class="btn btn-primary mt-2">
+        Log In to Apply
+    </a>
+{% endif %}
+
+<a href="{% url 'home' %}"
+   class="btn btn-outline-primary mt-2">
+    Browse More Jobs
+</a>

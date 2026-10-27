@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 800px;">
+    <a href="{% url 'job_detail' job.id %}"
+       class="btn btn-outline-secondary mb-4">
+        &larr; Back to Job Details
+    </a>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+            <h1 class="h3 fw-bold">Apply for {{ job.title }}</h1>
+            <p class="text-primary fw-semibold">{{ job.company }}</p>
+            <p class="text-muted">{{ job.location }}</p>
+
+            <hr>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold"
+                               for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="alert alert-info small">
+                    Upload a PDF or DOCX CV no larger than 5 MB.
+                    Review your document before submitting.
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

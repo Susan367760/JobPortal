@@ -1,0 +1,224 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container py-4 text-center">
+        <h1 class="display-4 fw-bold">Find Your Next Opportunity</h1>
+
+        <p class="lead mt-3 mb-4">
+            Discover jobs, connect with employers, and take the next step
+            in your career with CareerConnect.
+        </p>
+
+        <form method="get" action="{% url 'home' %}"
+              class="row g-2 justify-content-center">
+
+            <div class="col-12 col-md-5">
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control form-control-lg"
+                    placeholder="Job title or keyword"
+                    value="{{ request.GET.q|default:'' }}"
+                    aria-label="Search by job title or keyword"
+                >
+            </div>
+
+            <div class="col-12 col-md-4">
+                <input
+                    type="text"
+                    name="location"
+                    class="form-control form-control-lg"
+                    placeholder="City or location"
+                    value="{{ request.GET.location|default:'' }}"
+                    aria-label="Search by location"
+                >
+            </div>
+
+            <div class="col-12 col-md-auto">
+                <button type="submit"
+                        class="btn btn-dark btn-lg w-100">
+                    Search Jobs
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+<!-- Job Listings Section -->
+<section class="container py-5">
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center mb-4 gap-2">
+
+        <div>
+            <h2 class="fw-bold mb-1">Latest Job Opportunities</h2>
+            <p class="text-muted mb-0">
+                Explore opportunities that match your skills and interests.
+            </p>
+        </div>
+
+        <span class="badge text-bg-primary fs-6">
+            {{ jobs|length }} job{{ jobs|length|pluralize }}
+        </span>
+    </div>
+
+
+    <!-- Active Search Filters -->
+    {% if request.GET.q or request.GET.location %}
+        <div class="alert alert-light border d-flex
+                    justify-content-between align-items-center flex-wrap gap-2">
+
+            <div>
+                <strong>Search results</strong>
+
+                {% if request.GET.q %}
+                    <span class="ms-2">
+                        Keyword: {{ request.GET.q }}
+                    </span>
+                {% endif %}
+
+                {% if request.GET.location %}
+                    <span class="ms-2">
+                        Location: {{ request.GET.location }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'home' %}"
+               class="btn btn-sm btn-outline-secondary">
+                Clear Filters
+            </a>
+        </div>
+    {% endif %}
+
+
+    <!-- Job Cards -->
+    {% if jobs %}
+        <div class="row g-4">
+
+            {% for job in jobs %}
+                <div class="col-12 col-md-6 col-lg-4">
+
+                    <div class="card h-100 shadow-sm border-0">
+
+                        <div class="card-body p-4 d-flex flex-column">
+
+                            <div class="d-flex justify-content-between
+                                        align-items-start gap-2">
+
+                                <div>
+                                    <h3 class="h5 fw-bold mb-2">
+                                        {{ job.title }}
+                                    </h3>
+
+                                    <p class="text-primary fw-semibold mb-2">
+                                        {{ job.company }}
+                                    </p>
+                                </div>
+
+                                <span class="badge text-bg-light border">
+                                    {{ job.get_employment_type_display }}
+                                </span>
+                            </div>
+
+
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ job.location }}
+                            </p>
+
+
+                            <p class="text-secondary">
+                                {{ job.description|truncatewords:25 }}
+                            </p>
+
+
+                            {% if job.salary %}
+                                <p class="fw-semibold mb-3">
+                                    Salary: {{ job.salary }}
+                                </p>
+                            {% endif %}
+
+
+                            <div class="mt-auto pt-3">
+
+                                <p class="text-muted small mb-3">
+                                    Posted {{ job.created_at|date:"d M Y" }}
+                                </p>
+
+                                <a href="{% url 'job_detail' job.id %}"
+                                   class="btn btn-primary w-100">
+                                    View Details
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- No Jobs Found -->
+        <div class="text-center py-5">
+
+            <div class="mb-3">
+                <span class="display-4 text-secondary">
+                    &#128269;
+                </span>
+            </div>
+
+            <h3 class="fw-bold">No Jobs Found</h3>
+
+            <p class="text-muted">
+                We couldn't find any jobs matching your search.
+                Try another keyword or location.
+            </p>
+
+            <a href="{% url 'home' %}"
+               class="btn btn-primary mt-2">
+                View All Jobs
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- Call to Action -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+
+        <h2 class="fw-bold">Ready for Your Next Career Move?</h2>
+
+        <p class="text-muted mt-3">
+            Create your CareerConnect account and start exploring opportunities.
+        </p>
+
+        {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}"
+               class="btn btn-primary btn-lg mt-2">
+                Join CareerConnect
+            </a>
+        {% else %}
+            <a href="#"
+               class="btn btn-primary btn-lg mt-2">
+                Explore Opportunities
+            </a>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}
